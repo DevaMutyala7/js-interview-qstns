@@ -141,7 +141,7 @@ MyPromise.all([p1, p2]).then((val) => console.log(val));
 
 const testPromiseWithLateResolve = new MyPromise((res, rej) => {
   setTimeout(() => {
-    res("Promise 1 is resolved");
+    rej("Promise 1 is rejected");
   }, 3000);
 });
 
@@ -149,5 +149,4 @@ testPromiseWithLateResolve
   .then((val) => {
     console.log(val);
   })
-  .finally(() => console.log("in finally"))
-  .then(() => console.log("in chaining"));
+  .catch((err) => console.log("err", err));

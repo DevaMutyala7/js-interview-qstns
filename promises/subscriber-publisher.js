@@ -1,89 +1,110 @@
-class Events {
+class Event {
   constructor() {
-    this.subscribers = {};
-    this.subscribeOnceList = {};
-    this.subscribeOnceAsyncList = {};
+    this.subscribeOnceCb = {};
+    this.subscribeCb = {};
+    this.subscribeOnceAsyncCb = {};
   }
 
-  subscribe = function (name, fn) {
-    if(this.subscribers[name]){
-        this.subscribers[name].push(fn);
-    }
-    else{
-        this.subscribers[name] = [fn];
+  subscribe(name, callback) {
+    if (this.subscribeCb[name]) {
+      this.subscribeCb[name] = [...this.subscribeCb[name], callback];
+    } else {
+      this.subscribeCb[name] = [callback];
     }
 
     return () => {
-      if(this.subscribers[name]){
-        const index = this.subscribers[name].indexOf(fn);
-        this.subscribers[name].splice(index,1);
-      }
+      this.subscribeCb[name] = this.subscribeCb[name].filter(
+        (cb) => cb !== callback
+      );
     };
-  };
+  }
 
-  subscribeOnce = function (name,fn){
-    if(this.subscribeOnceList[name]){
-        let existingCb = this.subscribeOnceList[name];
-        this.subscribeOnceList[name].push([...existingCb,fn]);
-    }
-    else{
-        this.subscribeOnceList[name] = [fn];
+  subscribeOnce(name, callback) {
+    if (this.subscribeOnceCb[name]) {
+      this.subscribeOnceCb[name] = [...this.subscribeOnceCb[name], callback];
+    } else {
+      this.subscribeOnceCb[name] = [callback];
     }
   }
 
-  subscribeOnceAsync = function(name){
-    return new Promise((resolve,reject)=>{
-      if(this.subscribeOnceAsyncList[name]){
-        this.subscribeOnceAsyncList[name].push(resolve);
+  subscribeOnceAsync(name) {
+    return new Promise((res, rej) => {
+      if (this.subscribeOnceAsyncCb[name]) {
+        this.subscribeOnceAsyncCb[name] = [
+          ...this.subscribeOnceAsyncCb[name],
+          res,
+        ];
+      } else {
+        this.subscribeOnceAsyncCb[name] = [res];
       }
-      else{
-        this.subscribeOnceAsyncList[name] = [resolve];
-      }
-    })
+    });
   }
 
-  publish = function (name, data) {
-    let subscribedlist = this.subscribers[name] || [];
+  publish(name, data) {
+    //subscribe
+    if (this.subscribeCb[name]) {
+      this.subscribeCb[name].forEach((cb) => {
+        cb.call(this, data);
+      });
+    }
 
-    subscribedlist.forEach(sub=>sub(data));
+    //subscribeOnce
+    if (this.subscribeOnceCb[name]) {
+      this.subscribeOnceCb[name].forEach((cb) => {
+        cb.call(this, data);
+      });
 
-    let subscribeOnceCbs = this.subscribeOnceList[name] || [];
+      this.subscribeOnceCb[name] = [];
+    }
 
-    subscribeOnceCbs.forEach((cbs)=> cbs(data))
-
-    this.subscribeOnceList[name] = [];
-
-    let subscribeOnceAsyncCbs = this.subscribeOnceAsyncList[name] || [];
-
-    subscribeOnceAsyncCbs.forEach(promise=> promise(data));
-
-    this.subscribeOnceAsyncList[name] = [];
-
+    //subscribeOnceAsync
+    if (this.subscribeOnceAsyncCb[name]) {
+      this.subscribeOnceAsyncCb[name].forEach((res) => {
+        res(data);
+      });
+      this.subscribeOnceAsyncCb = [];
+    }
   }
 
-  publishAll = function (data){
-    this.subscribers.forEach(sub=> sub(data));
+  publishAll(data) {
+    Object.keys(this.subscribeCb).forEach((key) => {
+      this.subscribeCb[key].forEach((cb) => {
+        cb.call(this, data);
+      });
+    });
+
+    Object.keys(this.subscribeOnceCb).forEach((key) => {
+      this.subscribeOnceCb[key].forEach((cb) => {
+        cb.call(this, data);
+      });
+    });
+    this.subscribeOnceCb = [];
+
+    Object.keys(this.subscribeOnceAsyncCb).forEach((key) => {
+      this.subscribeOnceAsyncCb[key].forEach((cb) => {
+        cb.call(this, data);
+      });
+    });
+    this.subscribeOnceAsyncCb = [];
   }
 }
 
-const myEvent = new Events();
+const mazgine = new Event();
 
+const unsubscribeTOI = mazgine.subscribe("TOI", function (payload) {
+  console.log("send TOI to " + payload);
+});
 
-let unsubscribe1 = myEvent.subscribe("click", (data) =>
-  console.log("clicked 1", data)
-);
+const unsubscribeakshi = mazgine.subscribe("Sakshi", function (payload) {
+  console.log("send Sakshi to " + payload);
+});
 
-let unsubscribe2 = myEvent.subscribe("click", (data) =>
-  console.log("clicked 2", data)
-);
+mazgine.subscribeOnce("Deccan", function (payload) {
+  console.log("This is one time subscription to " + payload);
+});
 
-unsubscribe1();
+mazgine.subscribeOnceAsync("async").then((val) => {
+  console.log("this is subscription in future for " + val);
+});
 
-myEvent.subscribeOnce( "dbClick" , ()=>console.log('Double Clicked') );
-
-myEvent.subscribeOnceAsync("click").then((payload)=>console.log("i'm invoked",payload));
-
-
-myEvent.publish("click", 2); // clicked
-myEvent.publish( "dbClick","db");// Double Clicked
-
+mazgine.publishAll("Deva");
