@@ -12,19 +12,20 @@
 // }
 
 /*-----------for loop-----------*/
-// function asyncExecutor(promises){
-//     promises.forEach(promise=>{
-//         promise.then(val=>console.log(val));
-//     })
-// }
+async function asyncExecutor(promises) {
+  for (let promise of promises) {
+    let res = await promise.then((val) => val);
+    console.log(res);
+  }
+}
 
 /*----------reduce----------*/
-function asyncExecutor(promises) {
-  promises.reduce((accum, curr) => {
-    curr.then((val) => console.log(val));
-    // return accum;
-  }, []);
-}
+// function asyncExecutor(promises) {
+//   promises.reduce((accum, curr) => {
+//     curr.then((val) => console.log(val));
+//     // return accum;
+//   }, []);
+// }
 
 function async(i) {
   return new Promise((res, rej) => {

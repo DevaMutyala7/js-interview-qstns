@@ -7,23 +7,23 @@ function async(i) {
 }
 
 function parallelExecutor(promises, callback) {
-  let ans = [];
+  let fulfilled = [];
   let count = 0;
   promises.forEach((promise, index) => {
     promise.then((val) => {
-      ans[index] = val;
+      fulfilled[index] = val;
       count++;
       if (count === promises.length) {
-        callback(ans);
+        callback(fulfilled);
       }
     });
   });
 }
 
-let async1 = async(1);
+let async4 = async(4);
 let async2 = async(2);
 let async3 = async(3);
 
-parallelExecutor([async3, async1, async2], (result) =>
+parallelExecutor([async4, async2, async3], (result) =>
   console.log("result", result)
 );
