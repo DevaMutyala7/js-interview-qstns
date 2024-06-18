@@ -55,3 +55,10 @@ const TaskC = new Task([TaskA, TaskB], (done) => {
     done();
   }, 500);
 });
+
+const TaskD = new Task([TaskC], (done) => {
+  setTimeout(() => {
+    console.log("Task D completed");
+    done();
+  }, 1000);
+});
