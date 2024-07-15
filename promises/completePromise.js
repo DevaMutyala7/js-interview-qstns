@@ -180,13 +180,11 @@ MyPromise.allSettled = function (promises) {
       promise
         .then((val) => {
           fulfilled[index] = val;
-          count++;
-          if (count === promises.length) {
-            res(fulfilled);
-          }
         })
         .catch((err) => {
           fulfilled[index] = err;
+        })
+        .finally(() => {
           count++;
           if (count === promises.length) {
             res(fulfilled);

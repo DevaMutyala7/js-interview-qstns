@@ -13,6 +13,7 @@ item2.next = item3;
 item3.next = item4;
 item4.next = item1;
 
+/*===========SLow and Fast pointer============*/
 // function removeCircleFromList(list) {
 //   let slow = list;
 //   let fast = list.next;
@@ -26,13 +27,10 @@ item4.next = item1;
 
 //   return list;
 // }
-
 // console.log(removeCircleFromList(item1));
 
-// let set = new Set([item1]);
-// console.log(set);
-
-// function iterateObj(obj) {
+/* ==============With set================ */
+// function iterateObj(obj, set) {
 //   for (let key in obj) {
 //     if (obj.hasOwnProperty(key)) {
 //       if (typeof obj[key] === "object") {
@@ -40,15 +38,18 @@ item4.next = item1;
 //           delete obj[key];
 //         } else {
 //           set.add(obj[key]);
-//           iterateObj(obj[key]);
+//           iterateObj(obj[key], set);
 //         }
 //       }
 //     }
 //   }
 // }
 
-// iterateObj(item1);
+// let set = new Set([item1]);
+// iterateObj(item1, set);
+// console.log(item1);
 
+/*======================WeakSet======================== */
 function getCircularReplacer() {
   let seen = new WeakSet();
 
@@ -65,14 +66,7 @@ function getCircularReplacer() {
 
 console.log(JSON.stringify(item1, getCircularReplacer()));
 
-console.log(item1);
+// console.log(item1);
 // let obj1 = { name: "Deva", age: 27 };
 // let obj2 = { name: "Teja", age: 40 };
 // let obj3 = { name: "Mutyala", age: 65 };
-
-// let set1 = new Set();
-// set1.add(obj1);
-// set1.add(obj1);
-// set1.add(obj3);
-
-// console.log(set1);

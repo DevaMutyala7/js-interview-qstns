@@ -8,15 +8,29 @@ function debounce(func, delay, immediate) {
 
     clearTimeout(timer);
     timer = setTimeout(() => {
-      if (!callNow) {
+      if (!immediate) {
+        console.log("in timer");
         func.apply(context, args);
       }
 
       timer = null;
     }, delay);
 
-    if (!callNow) {
+    if (callNow) {
+      console.log("in callNow");
       func.apply(context, args);
     }
   };
 }
+
+let debounced = debounce(
+  () => {
+    console.log("hii");
+  },
+  1000,
+  true
+);
+
+debounced();
+debounced();
+debounced();
