@@ -1,24 +1,20 @@
-async function mapSeries(arr, cb) {
-  let output = [];
-  return new Promise(async (res, rej) => {
-    for (let item of arr) {
-      await new Promise((resolve, reject) => {
-        cb(item, (err, val) => {
-          if (err) {
-            reject("Errorrr");
-          } else {
-            resolve(val);
-          }
+function mapSeries(arr, cb) {
+  return new Promise(async (resolve, reject) => {
+    let finalRes = arr.reduce((acc, curr) => {
+      return acc.then((val) => {
+        return new Promise((res, rej) => {
+          cb(curr, (err, num) => {
+            if (err) {
+              rej("Error");
+            } else {
+              res([...val, num]);
+            }
+          });
         });
-      })
-        .then((val) => {
-          output.push(val);
-          if (output.length === arr.length) {
-            res(output);
-          }
-        })
-        .catch((err) => rej(err));
-    }
+      });
+    }, Promise.resolve([]));
+
+    resolve(finalRes);
   });
 }
 

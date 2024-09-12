@@ -1,36 +1,29 @@
 function debounce(func, delay, immediate) {
   let timer = null;
 
-  return () => {
+  return function () {
     const args = arguments;
     const context = this;
     const callNow = immediate && !timer;
 
     clearTimeout(timer);
-    timer = setTimeout(() => {
-      if (!immediate) {
-        console.log("in timer");
-        func.apply(context, args);
-      }
-
-      timer = null;
-    }, delay);
 
     if (callNow) {
-      console.log("in callNow");
       func.apply(context, args);
     }
+
+    timer = setTimeout(() => {
+      if (!callNow) {
+        console.log("not callnow");
+        func.apply(context, args);
+      }
+      timer = null;
+    }, delay);
   };
 }
 
-let debounced = debounce(
-  () => {
-    console.log("hii");
-  },
-  1000,
-  true
-);
-
-debounced();
-debounced();
-debounced();
+const onMouse = (e) => {
+  console.log(e.x);
+};
+const debouncedMouseMove = debounce(onMouse, 1000, true);
+window.addEventListener("mousemove", debouncedMouseMove);

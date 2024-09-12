@@ -1,44 +1,39 @@
-function mapLimit(arr, limit, callback) {
-  let output = [];
+function chunks(arr, limit) {
+  const result = [];
+  const newArr = [...arr];
 
-  function getChunks(arr, limit) {
-    if (arr.length <= limit) {
-      return [arr];
-    }
-
-    let res = [arr.slice(0, limit)];
-
-    let remainingArr = arr.slice(limit);
-
-    return res.concat(getChunks(remainingArr, limit));
+  while (newArr.length) {
+    result.push(newArr.splice(0, limit));
   }
 
-  return new Promise(async (res, rej) => {
-    let newArr = getChunks(arr, limit);
-    console.log("newArr", newArr);
-    for (let i = 0; i < newArr.length; i++) {
-      console.log(`batch ${i + 1}`);
-      for (let item of newArr[i]) {
-        await new Promise((resolve, reject) => {
-          callback(item, (err, val) => {
-            if (err) {
-              reject(err);
-            } else {
-              resolve(val);
-            }
+  return result;
+}
+
+function mapLimit(arr, limit, callback) {
+  let chunkedArr = chunks(arr, limit);
+
+  return new Promise(async (resolve, reject) => {
+    let final = chunkedArr.reduce((acc, curr) => {
+      return acc.then((val) => {
+        return new Promise((res, rej) => {
+          const output = [];
+          curr.forEach((elem) => {
+            callback(elem, (err, num) => {
+              if (err) {
+                reject("Error");
+              } else {
+                output.push(num);
+                if (output.length === curr.length) {
+                  res([...val, ...output]);
+                }
+              }
+            });
           });
-        })
-          .then((val) => {
-            output.push(val);
-            if (output.length >= arr.length) {
-              res(output);
-            }
-          })
-          .catch((err) => {
-            rej(err);
-          });
-      }
-    }
+        });
+      });
+    }, Promise.resolve([]));
+
+    resolve(final);
   });
 }
 

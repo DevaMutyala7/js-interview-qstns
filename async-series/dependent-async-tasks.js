@@ -1,37 +1,34 @@
 class Task {
-  constructor(tasks, callback) {
-    this.completed = false;
-    this.tasks = tasks
-      ? tasks.filter((task) => !task.completed && task instanceof Task)
-      : [];
-    this.totalDependecies = this.tasks.length;
-    this.dependenciesList = [];
-    this.callback = callback;
+  constructor(tasks, cb) {
+    this.filteredTasks = tasks ? tasks.filter((task) => !task.completed) : [];
+    this.incompletedTasks = this.filteredTasks.length;
+    this.callback = cb;
+    this.handlers = [];
     this.executeCallback();
   }
 
   executeCallback() {
-    if (this.tasks.length) {
-      for (const task of this.tasks) {
-        task.dependenciesList.push(this.track.bind(this));
-      }
-    } else {
+    if (!this.incompletedTasks) {
       this.callback(this.done.bind(this));
+    } else {
+      for (let task of this.filteredTasks) {
+        task.handlers.push(this);
+      }
     }
   }
 
-  track() {
-    this.totalDependecies--;
-    if (this.totalDependecies === 0) {
-      this.callback(this.done.bind(this));
+  executeHandlers() {
+    for (let handler of this.handlers) {
+      handler.incompletedTasks--;
+      if (!handler.incompletedTasks) {
+        handler.callback(this.done.bind(handler));
+      }
     }
   }
 
   done() {
     this.completed = true;
-    for (const cb of this.dependenciesList) {
-      cb();
-    }
+    this.executeHandlers();
   }
 }
 
@@ -53,7 +50,7 @@ const TaskC = new Task([TaskA, TaskB], (done) => {
   setTimeout(() => {
     console.log("Task C completed");
     done();
-  }, 500);
+  }, 5000);
 });
 
 const TaskD = new Task([TaskC], (done) => {

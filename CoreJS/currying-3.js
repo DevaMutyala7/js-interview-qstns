@@ -1,6 +1,10 @@
 function sum(...args) {
   let storage = [...args];
 
+  if (!args.length) {
+    return 0;
+  }
+
   function res(...args) {
     storage.push(...args);
     return res;

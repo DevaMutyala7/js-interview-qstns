@@ -1,23 +1,13 @@
 function lodashGet(obj, path) {
-  if (!path || !path.length) {
-    return obj;
-  }
+  let keys = path.replace(/[^a-zA-Z0-9\s]/g, "");
+  keys = keys.split("");
 
-  let keys;
-
-  if (typeof path === "string") {
-    path = path.replace(/[^a-zA-Z0-9\s]/g, "");
-    keys = path.split("");
-  } else {
-    keys = path;
-  }
-
+  let res = obj;
   for (let key of keys) {
-    if (obj[key]) {
-      return lodashGet(obj[key], keys.slice(1));
-    }
-    return undefined;
+    res = res[key];
   }
+
+  return res;
 }
 
 let obj = {
@@ -28,4 +18,4 @@ let obj = {
   },
 };
 
-console.log(lodashGet(obj, "a.b.c[1]"));
+console.log(lodashGet(obj, "a"));

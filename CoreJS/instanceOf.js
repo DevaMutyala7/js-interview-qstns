@@ -1,6 +1,6 @@
 function instanceOf(obj, target) {
   let proto = obj.__proto__;
-  console.log("proto", target.prototype);
+
   while (proto) {
     if (target.prototype === proto) {
       return true;
@@ -16,12 +16,12 @@ class Vehicle {
   }
 }
 
-class Car extends Vehicle {
+class Car {
   constructor() {
-    super();
+    // super();
     this.wheels = 4;
   }
 }
 
 const benz = new Car();
-console.log(benz.__proto__);
+console.log(instanceOf(benz, Vehicle));

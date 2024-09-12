@@ -1,27 +1,27 @@
-function getKey(obj, key) {
-  if (obj[key] in obj) {
-    return getKey(obj, obj[key]) + "->" + key;
+function getkey(key, obj) {
+  if (Object.keys(obj).includes(obj[key])) {
+    return getkey(obj[key], obj) + "->" + obj[key];
   } else {
-    return obj[key] + "->" + key;
+    return obj[key];
   }
 }
 
 function convert(obj) {
-  return Object.keys(obj).reduce((acc, curr) => {
-    acc.push(getKey(obj, curr));
-    return acc;
-  }, []);
+  return Object.keys(obj).map((key) => {
+    return getkey(key, obj) + "->" + key;
+  });
 }
 
 function ancestoryTree(arr) {
-  let aggregated = arr.reduce((acc, curr) => {
+  let obj = arr.reduce((acc, curr) => {
     let [child, parent] = curr;
+
     acc[child] = parent;
 
     return acc;
   }, {});
 
-  return convert(aggregated);
+  return convert(obj);
 }
 
 let arr = [

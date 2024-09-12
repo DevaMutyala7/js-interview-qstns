@@ -28,7 +28,6 @@ function createSetInterval() {
       if (Date.now() > queue[i].time) {
         queue[i].func();
         queue[i].time = Date.now() + queue[i].frequency;
-        requestIdleCallback(runSetInterval);
       } else {
         requestIdleCallback(runSetInterval);
       }
@@ -46,12 +45,10 @@ console.log("start");
 
 let interval1 = mySetInterval(() => {
   console.log("interval 1");
-}, 5000);
+}, 3000);
 
 let interval2 = mySetInterval(() => {
   console.log("interval 2");
-}, 1000);
+}, 2000);
 
 console.log("end");
-
-myClearInterval(interval2);

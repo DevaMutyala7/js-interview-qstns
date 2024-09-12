@@ -1,22 +1,15 @@
 function aggregateArrayOfObjects(arr, on, who) {
-  let agg = arr.reduce((acc, curr) => {
-    let onValue = curr[on];
-    let whoValue = curr[who];
-    if (acc[onValue]) {
-      acc[onValue] = {
-        [on]: onValue,
-        [who]: [...acc[onValue][who], whoValue],
-      };
+  return arr.reduce((acc, curr) => {
+    let On = curr[on];
+    let Who = curr[who];
+    if (acc[On]) {
+      acc[On] = [...acc[On], Who];
     } else {
-      acc[curr[on]] = {
-        [on]: curr[on],
-        [who]: [curr[who]],
-      };
+      acc[On] = [Who];
     }
+
     return acc;
   }, {});
-
-  return Object.values(agg);
 }
 
 const endorsements = [

@@ -1,22 +1,12 @@
-function retryPromises(asyncFun, retries, delay, finalError, count) {
-  if (count > retries) {
-    console.log(finalError);
-    return;
-  }
-
+function retryPromises(asyncFun, retries, delay, finalError) {
   asyncFun
     .then((val) => console.log(val))
     .catch(() => {
-      if (count === 1) {
-        console.log(`...attempt ${count} ---> failed`);
-      } else {
-        console.log(
-          `...attempt ${count} ---> retry after ${delay}ms ----> failed`
-        );
-      }
-      if (count <= retries) {
+      console.log(`...attempt failed ---> retry after ${delay}ms ----> failed`);
+
+      if (retries) {
         setTimeout(() => {
-          retryPromises(asyncFun, retries, delay, finalError, ++count);
+          retryPromises(asyncFun, --retries, delay, finalError);
         }, delay);
       }
     });
@@ -28,4 +18,4 @@ function asyncFunc() {
   });
 }
 
-retryPromises(asyncFunc(), 3, 4000, "FAILED", 1);
+retryPromises(asyncFunc(), 3, 4000, "FAILED");

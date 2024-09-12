@@ -1,6 +1,5 @@
 /*--------recursive-------------*/
 // async function asyncExecutor(promises) {
-
 //   let p = promises.shift();
 
 //   p.then((val) => {
@@ -12,20 +11,21 @@
 // }
 
 /*-----------for loop-----------*/
-async function asyncExecutor(promises) {
-  for (let promise of promises) {
-    let res = await promise.then((val) => val);
-    console.log(res);
-  }
-}
+// async function asyncExecutor(promises) {
+//   for (let promise of promises) {
+//     let res = await promise.then((val) => val);
+//     console.log(res);
+//   }
+// }
 
 /*----------reduce----------*/
-// function asyncExecutor(promises) {
-//   promises.reduce((accum, curr) => {
-//     curr.then((val) => console.log(val));
-//     // return accum;
-//   }, []);
-// }
+async function asyncExecutor(promises) {
+  promises.reduce((acc, cur) => {
+    return acc.then(() => {
+      return cur.then((val) => console.log(val));
+    });
+  }, Promise.resolve());
+}
 
 function async(i) {
   return new Promise((res, rej) => {

@@ -36,8 +36,8 @@ let { myClearTimeout, mySetTimeout } = Close();
 
 console.log("start");
 
-let timer1 = mySetTimeout(() => {
-  console.log("timer 1");
+let timer1 = mySetTimeout((a) => {
+  console.log("timer 1 " + a);
 }, 5000);
 
 let timer2 = mySetTimeout(() => {

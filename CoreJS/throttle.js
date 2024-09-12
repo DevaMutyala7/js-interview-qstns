@@ -1,14 +1,14 @@
 function throttle(func, limit) {
-  let timer = null;
+  let timer = true;
 
   return () => {
     const context = this;
     const args = arguments;
-    if (!timer) {
-      timer = setTimeout(() => {
-        func.apply(context, args);
-        clearTimeout(timer);
-        timer = null;
+    if (timer) {
+      func.apply(context, args);
+      timer = false;
+      setTimeout(() => {
+        timer = true;
       }, limit);
     }
   };
