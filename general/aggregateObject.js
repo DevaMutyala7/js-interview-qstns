@@ -1,11 +1,18 @@
 function aggregateArrayOfObjects(arr, on, who) {
   return arr.reduce((acc, curr) => {
-    let On = curr[on];
-    let Who = curr[who];
-    if (acc[On]) {
-      acc[On] = [...acc[On], Who];
+    let currOnVal = curr[on];
+    let currWhoVal = curr[who];
+
+    if (acc[currOnVal]) {
+      acc[currOnVal] = {
+        [on]: currOnVal,
+        [who]: [acc[currOnVal][who], currWhoVal],
+      };
     } else {
-      acc[On] = [Who];
+      acc[currOnVal] = {
+        [on]: currOnVal,
+        [who]: [currWhoVal],
+      };
     }
 
     return acc;

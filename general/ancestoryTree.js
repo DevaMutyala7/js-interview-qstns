@@ -1,27 +1,24 @@
-function getkey(key, obj) {
-  if (Object.keys(obj).includes(obj[key])) {
-    return getkey(obj[key], obj) + "->" + obj[key];
-  } else {
-    return obj[key];
-  }
-}
-
-function convert(obj) {
-  return Object.keys(obj).map((key) => {
-    return getkey(key, obj) + "->" + key;
-  });
-}
-
 function ancestoryTree(arr) {
-  let obj = arr.reduce((acc, curr) => {
-    let [child, parent] = curr;
+  const obj = convertToObj(arr);
 
-    acc[child] = parent;
+  return Object.keys(obj).map((key) => recursive(key, obj));
+}
 
-    return acc;
-  }, {});
+function convertToObj(arr) {
+  let obj = {};
+  arr.forEach((item) => {
+    obj[item[0]] = item[1];
+  });
 
-  return convert(obj);
+  return obj;
+}
+
+function recursive(key, obj) {
+  if (!obj[key]) {
+    return key;
+  } else {
+    return recursive(obj[key], obj) + "->" + key;
+  }
 }
 
 let arr = [

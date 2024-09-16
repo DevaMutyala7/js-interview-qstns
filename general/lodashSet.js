@@ -1,21 +1,20 @@
 function helper(obj, path, value) {
-  let [current, ...rest] = path;
-
-  if (rest.length) {
-    if (obj[current]) {
-      return helper(obj[current], rest, value);
+  let key = path.shift();
+  if (path.length > 0) {
+    if (!obj[key]) {
+      const isNumber = `${+path[0]}` === path[0];
+      obj[key] = isNumber ? [] : {};
+    }
+    if (typeof obj[key] === "object") {
+      helper(obj[key], path, value);
     } else {
-      const isNumber = `${+rest[0]}` === rest[0];
-      if (isNumber) {
-        obj[current] = [];
-      } else {
-        obj[current] = {};
-      }
-      return helper(obj[current], rest, value);
+      helper(isNumber ? [] : {}, path, value);
     }
   } else {
-    obj[current] = value;
+    obj[key] = value;
   }
+
+  return obj;
 }
 
 function lodashSet(obj, path, value) {
@@ -28,6 +27,6 @@ function lodashSet(obj, path, value) {
 
 let obj = { a: [{ b: { c: 3 } }] };
 
-lodashSet(obj, ["x", "0", "y", "z"], 4);
+lodashSet(obj, ["a", "0", "b", "d"], 4);
 
 console.log(obj);

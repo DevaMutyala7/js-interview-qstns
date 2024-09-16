@@ -1,15 +1,24 @@
 function groupBy(values, keyFinder) {
-  return values.reduce((a, b) => {
-    let key = typeof keyFinder === "function" ? keyFinder(b) : b[keyFinder];
+  let obj = {};
 
-    if (a[key]) {
-      a[key] = [...a[key], b];
+  const getKey = (value) => {
+    if (typeof keyFinder === "string") {
+      return value[keyFinder];
     } else {
-      a[key] = [b];
+      return keyFinder(value);
     }
+  };
 
-    return a;
-  }, {});
+  values.forEach((value) => {
+    const key = getKey(value);
+    if (obj[key]) {
+      obj[key] = [...obj[key], value];
+    } else {
+      obj[key] = [value];
+    }
+  });
+
+  return obj;
 }
 
 console.log(groupBy(["one", "two", "three"], "length"));

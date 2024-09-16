@@ -1,13 +1,13 @@
 function lodashGet(obj, path) {
-  let keys = path.replace(/[^a-zA-Z0-9\s]/g, "");
-  keys = keys.split("");
+  const newPath = path.replace(/[^a-zA-Z0-9]/g, "").split("");
 
-  let res = obj;
-  for (let key of keys) {
-    res = res[key];
-  }
+  let result = { ...obj };
 
-  return res;
+  newPath.forEach((key) => {
+    result = result[key];
+  });
+
+  return result;
 }
 
 let obj = {
@@ -18,4 +18,4 @@ let obj = {
   },
 };
 
-console.log(lodashGet(obj, "a"));
+console.log(lodashGet(obj, "a.b.c[2]"));
